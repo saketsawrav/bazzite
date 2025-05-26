@@ -934,7 +934,7 @@ RUN --mount=type=cache,dst=/var/cache \
     glib-compile-schemas --strict /tmp/bazzite-schema-test && \
     glib-compile-schemas /usr/share/glib-2.0/schemas &>/dev/null && \
     rm -r /tmp/bazzite-schema-test && \
-    dnf5 remove supergfxctl && \
+    dnf5 remove supergfxctl -y && \
     /ctx/image-info && \
     /ctx/build-initramfs && \
     /ctx/finalize

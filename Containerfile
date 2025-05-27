@@ -72,6 +72,18 @@ ARG VERSION_PRETTY="${VERSION_PRETTY}"
 
 COPY system_files/desktop/shared system_files/desktop/${BASE_IMAGE_NAME} /
 
+# Copy DX system files if flavor contains "dx"
+RUN if [[ "${IMAGE_FLAVOR}" =~ "dx" ]]; then \
+        echo "Copying DX system files..." \
+    ; fi
+COPY system_files/dx/ /tmp/dx-files/
+RUN if [[ "${IMAGE_FLAVOR}" =~ "dx" ]]; then \
+        cp -r /tmp/dx-files/* / && \
+        rm -rf /tmp/dx-files \
+    ; else \
+        rm -rf /tmp/dx-files \
+    ; fi
+
 # Setup Copr repos
 RUN --mount=type=cache,dst=/var/cache \
     --mount=type=cache,dst=/var/log \
@@ -514,6 +526,94 @@ RUN --mount=type=cache,dst=/var/cache \
     dnf5 install -y --enable-repo=copr:copr.fedorainfracloud.org:ublue-os:packages \
         ublue-os-media-automount-udev && \
     { systemctl enable ublue-os-media-automount.service || true; } && \
+    /ctx/cleanup
+
+# Install DX packages if flavor contains "dx"
+RUN --mount=type=cache,dst=/var/cache \
+    --mount=type=cache,dst=/var/log \
+    --mount=type=bind,from=ctx,source=/,target=/ctx \
+    --mount=type=tmpfs,dst=/tmp \
+    if [[ "${IMAGE_FLAVOR}" =~ "dx" ]]; then \
+        # Install gamescope session plus
+        mkdir -p /usr/share/gamescope-session-plus/ && \
+        curl -Lo /usr/share/gamescope-session-plus/bootstrap_steam.tar.gz https://large-package-sources.nobaraproject.org/bootstrap_steam.tar.gz && \
+        dnf5 install --enable-repo="copr:copr.fedorainfracloud.org:bazzite-org:bazzite" -y \
+            gamescope-session-plus \
+            gamescope-session-steam && \
+        # Install development tools
+        dnf5 install -y \
+            android-tools \
+            bcc \
+            bpftop \
+            bpftrace \
+            btop \
+            flatpak-builder \
+            ccache \
+            nicstat \
+            numactl \
+            podman-machine \
+            podman-tui \
+            python3-ramalama \
+            qemu-kvm \
+            restic \
+            rclone \
+            sysprof \
+            tiptop \
+            zsh && \
+        dnf5 install --enable-repo="copr:copr.fedorainfracloud.org:ublue-os:packages" -y \
+            ublue-setup-services && \
+        # Add VS Code repository and install
+        dnf5 config-manager addrepo --set=baseurl="https://packages.microsoft.com/yumrepos/vscode" --id="vscode" && \
+        dnf5 config-manager setopt vscode.enabled=0 && \
+        dnf5 config-manager setopt vscode.gpgcheck=0 && \
+        dnf5 install --nogpgcheck --enable-repo="vscode" -y code && \
+        # Add Docker repository and install
+        dnf5 config-manager addrepo --from-repofile="https://download.docker.com/linux/fedora/docker-ce.repo" && \
+        dnf5 config-manager setopt docker-ce-stable.enabled=0 && \
+        dnf5 install -y --enable-repo="docker-ce-stable" \
+            containerd.io \
+            docker-buildx-plugin \
+            docker-ce \
+            docker-ce-cli \
+            docker-compose-plugin || { \
+            if (($(lsb_release -sr) == 42)); then \
+                echo "::info::Missing docker packages in f42, falling back to test repos..." && \
+                dnf5 install -y --enablerepo="docker-ce-test" \
+                    containerd.io \
+                    docker-buildx-plugin \
+                    docker-ce \
+                    docker-ce-cli \
+                    docker-compose-plugin \
+            ; fi \
+        } && \
+        # Configure iptables for docker-in-docker
+        mkdir -p /etc/modules-load.d && \
+        echo "iptable_nat" >> /etc/modules-load.d/ip_tables.conf && \
+        # Install Coder
+        curl -L https://coder.com/install.sh | sh \
+    ; fi && \
+    /ctx/cleanup
+
+# Configure DX services if flavor contains "dx"
+RUN --mount=type=cache,dst=/var/cache \
+    --mount=type=cache,dst=/var/log \
+    --mount=type=bind,from=ctx,source=/,target=/ctx \
+    --mount=type=tmpfs,dst=/tmp \
+    if [[ "${IMAGE_FLAVOR}" =~ "dx" ]]; then \
+        systemctl enable docker.socket && \
+        systemctl enable podman.socket && \
+        systemctl enable ublue-system-setup.service && \
+        systemctl --global enable ublue-user-setup.service && \
+        # Fix /opt directory structure for DX packages
+        mkdir -p /usr/lib/opt && \
+        mkdir -p /usr/lib/tmpfiles.d && \
+        for dir in /var/opt/*/; do \
+            [ -d "$dir" ] || continue && \
+            dirname=$(basename "$dir") && \
+            mv "$dir" "/usr/lib/opt/$dirname" && \
+            echo "L+ /var/opt/$dirname - - - - /usr/lib/opt/$dirname" >>/usr/lib/tmpfiles.d/opt-fix.conf \
+        ; done \
+    ; fi && \
     /ctx/cleanup
 
 # Cleanup & Finalize

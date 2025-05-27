@@ -16,6 +16,8 @@ valid_images=(
     kinoite
     gnome
     kde
+    asus-dx
+    bazzite-asus-dx
 )
 image=${image,,}
 if [[ ! ${valid_images[*]} =~ ${image} ]]; then

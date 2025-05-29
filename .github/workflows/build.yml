@@ -63,9 +63,9 @@ jobs:
       fail-fast: false
       matrix:
         base_image_flavor: [main]
-        base_name: [bazzite, bazzite-nvidia]
+        base_name: [bazzite-nvidia]
         base_image_name: [kinoite]
-        target_image_flavor: [asus, asus-dx]
+        target_image_flavor: [asus-dx]
         target_nvidia_flavor: [nvidia-open]
         fedora_version: [42]
         include:

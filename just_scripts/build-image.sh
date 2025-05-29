@@ -49,6 +49,7 @@ $container_mgr build -f Containerfile \
     --build-arg="BASE_IMAGE_FLAVOR=${flavor}" \
     --build-arg="IMAGE_FLAVOR=${image_flavor}" \
     --build-arg="KERNEL_FLAVOR=bazzite" \
+    --build-arg="KERNEL_VERSION=6.14.6-105.bazzite.fc42.x86_64" \
     --build-arg="SOURCE_IMAGE=${base_image}-${flavor}" \
     --build-arg="FEDORA_VERSION=${latest}" \
     --target="${target}" \

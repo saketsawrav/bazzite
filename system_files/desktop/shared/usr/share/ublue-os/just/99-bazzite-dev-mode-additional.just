@@ -55,9 +55,7 @@ setup-dev-env component="":
 
         if [ ! -d "flutter" ]; then
             echo "📥 Downloading Flutter SDK..."
-            # Get the latest stable Flutter version
-            FLUTTER_VERSION=$(curl -s https://api.github.com/repos/flutter/flutter/releases/latest | grep -o '"tag_name": "[^"]*' | cut -d'"' -f4)
-            wget -O flutter_linux.tar.xz "https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_${FLUTTER_VERSION}-stable.tar.xz"
+            wget -O flutter_linux.tar.xz https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.16.5-stable.tar.xz
             tar xf flutter_linux.tar.xz
             rm flutter_linux.tar.xz
             echo "✅ Flutter SDK installed successfully"
@@ -98,17 +96,7 @@ setup-dev-env component="":
             echo "📥 Downloading Android Studio..."
             cd "$HOME/Development"
 
-            # Get the latest Android Studio download URL
-            ANDROID_STUDIO_URL=$(curl -s "https://developer.android.com/studio" | grep -o 'https://redirector.gvt1.com/edgedl/android/studio/ide-zips/[^"]*linux.tar.gz' | head -1)
-
-            if [ -n "$ANDROID_STUDIO_URL" ]; then
-                wget -O android-studio.tar.gz "$ANDROID_STUDIO_URL"
-            else
-                # Fallback to a known version
-                echo "⚠️  Could not fetch latest version, using fallback..."
-                wget -O android-studio.tar.gz "https://redirector.gvt1.com/edgedl/android/studio/ide-zips/2024.2.1.12/android-studio-2024.2.1.12-linux.tar.gz"
-            fi
-
+            wget -O android-studio.tar.gz "https://redirector.gvt1.com/edgedl/android/studio/ide-zips/2023.1.1.28/android-studio-2023.1.1.28-linux.tar.gz"
             echo "📦 Extracting Android Studio..."
             tar -xzf android-studio.tar.gz
             rm android-studio.tar.gz
@@ -220,57 +208,4 @@ setup-dev-env component="":
     esac
 
     echo ""
-    echo "✨ Task completed successfully!"
-
-# Install development tools via Homebrew
-install-dev-tools:
-    #!/usr/bin/bash
-    echo "🍺 Installing development tools via Homebrew..."
-    brew install git gh node python3 go rust docker docker-compose kubectl helm terraform
-    echo "✅ Development tools installed successfully!"
-
-# Setup Git configuration
-setup-git name="" email="":
-    #!/usr/bin/bash
-    if [ -z "{{ name }}" ] || [ -z "{{ email }}" ]; then
-        echo "❌ Please provide both name and email:"
-        echo "   ujust setup-git \"Your Name\" \"your.email@example.com\""
-        exit 1
-    fi
-
-    git config --global user.name "{{ name }}"
-    git config --global user.email "{{ email }}"
-    git config --global init.defaultBranch main
-    git config --global pull.rebase false
-
-    echo "✅ Git configured successfully!"
-    echo "   Name: {{ name }}"
-    echo "   Email: {{ email }}"
-
-# Install VS Code extensions for development
-install-vscode-extensions:
-    #!/usr/bin/bash
-    echo "🔧 Installing VS Code extensions..."
-
-    extensions=(
-        "ms-python.python"
-        "ms-vscode.cpptools"
-        "rust-lang.rust-analyzer"
-        "golang.go"
-        "ms-vscode.vscode-typescript-next"
-        "bradlc.vscode-tailwindcss"
-        "esbenp.prettier-vscode"
-        "ms-vscode.vscode-json"
-        "redhat.vscode-yaml"
-        "ms-kubernetes-tools.vscode-kubernetes-tools"
-        "ms-vscode-remote.remote-containers"
-        "dart-code.dart-code"
-        "dart-code.flutter"
-    )
-
-    for ext in "${extensions[@]}"; do
-        echo "Installing $ext..."
-        code --install-extension "$ext" --force
-    done
-
-    echo "✅ VS Code extensions installed successfully!" 
+    echo "✨ Task completed successfully!" 

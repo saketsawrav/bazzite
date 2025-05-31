@@ -541,6 +541,7 @@ RUN --mount=type=cache,dst=/var/cache \
             gamescope-session-steam && \
         dnf5 install -y fedora-workstation-repositories && \
         dnf5 config-manager setopt google-chrome.enabled=1 && \
+        rm -rf /opt/google && \
         dnf5 install -y google-chrome-stable && \
         # Install development tools
         dnf5 install -y \

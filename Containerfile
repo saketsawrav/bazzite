@@ -539,10 +539,18 @@ RUN --mount=type=cache,dst=/var/cache \
         dnf5 install --enable-repo="copr:copr.fedorainfracloud.org:bazzite-org:bazzite" -y \
             gamescope-session-plus \
             gamescope-session-steam && \
-        dnf5 install -y fedora-workstation-repositories && \
-        dnf5 config-manager setopt google-chrome.enabled=1 && \
-        rm -rf /opt/google && \
-        dnf5 install -y google-chrome-stable && \
+        mv /opt{,.bak} && \
+        mkdir /opt && \
+        dnf5 install -y --enablerepo="google-chrome" google-chrome-stable && \
+        mv /opt/google/chrome /usr/lib/google-chrome && \
+        ln -sf /usr/lib/google-chrome/google-chrome /usr/bin/google-chrome-stable && \
+        mkdir -p /usr/share/icons/hicolor/{16x16/apps,24x24/apps,32x32/apps,48x48/apps,64x64/apps,128x128/apps,256x256/apps} && \
+        for i in "16" "24" "32" "48" "64" "128" "256"; do \
+            ln -sf /usr/lib/google-chrome/product_logo_$i.png /usr/share/icons/hicolor/${i}x${i}/apps/google-chrome.png; \
+        done && \
+        rm -rf /etc/cron.daily/google-chrome && \
+        rmdir /opt/{google,} && \
+        mv /opt{.bak,} && \
         # Install development tools
         dnf5 install -y \
             android-tools \

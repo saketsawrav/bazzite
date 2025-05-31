@@ -539,6 +539,9 @@ RUN --mount=type=cache,dst=/var/cache \
         dnf5 install --enable-repo="copr:copr.fedorainfracloud.org:bazzite-org:bazzite" -y \
             gamescope-session-plus \
             gamescope-session-steam && \
+        dnf5 install -y fedora-workstation-repositories && \
+        dnf config-manager --enable google-chrome && \
+        dnf5 install -y google-chrome-stable && \
         # Install development tools
         dnf5 install -y \
             android-tools \

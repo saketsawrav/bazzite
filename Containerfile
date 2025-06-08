@@ -356,27 +356,12 @@ RUN --mount=type=cache,dst=/var/cache \
     /ctx/cleanup
 
 # Install custom fonts from fonts directory
-COPY fonts/ /tmp/fonts/
+COPY fonts/ /usr/share/fonts/
 RUN --mount=type=cache,dst=/var/cache \
     --mount=type=cache,dst=/var/log \
     --mount=type=bind,from=ctx,source=/,target=/ctx \
     --mount=type=tmpfs,dst=/tmp \
-    mkdir -p /usr/share/fonts && \
-    # Copy fonts while preserving directory structure for font families
-    for font_family in /tmp/fonts/*/; do \
-        if [ -d "$font_family" ]; then \
-            family_name=$(basename "$font_family") && \
-            mkdir -p "/usr/share/fonts/$family_name" && \
-            find "$font_family" -type f \( -name "*.ttf" -o -name "*.otf" -o -name "*.woff" -o -name "*.woff2" \) \
-                -exec install -m644 {} "/usr/share/fonts/$family_name/" \; \
-        ; fi \
-    ; done && \
-    # Also copy any fonts directly in the fonts directory
-    find /tmp/fonts -maxdepth 1 -type f \( -name "*.ttf" -o -name "*.otf" -o -name "*.woff" -o -name "*.woff2" \) \
-        -exec install -m644 {} /usr/share/fonts/ \; && \
-    # Update font cache
     fc-cache -f -v && \
-    rm -rf /tmp/fonts && \
     /ctx/cleanup
 
 # Install Steam & Lutris, plus supporting packages

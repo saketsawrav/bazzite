@@ -1051,6 +1051,8 @@ RUN --mount=type=cache,dst=/var/cache \
     glib-compile-schemas /usr/share/glib-2.0/schemas &>/dev/null && \
     rm -r /tmp/bazzite-schema-test && \
     dnf5 remove supergfxctl -y && \
+    dnf5 remove tuned tuned-ppd -y && \
+    dnf5 install power-profiles-daemon -y --allowerasing && \
     /ctx/image-info && \
     /ctx/build-initramfs && \
     /ctx/finalize

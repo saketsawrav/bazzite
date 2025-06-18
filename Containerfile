@@ -315,6 +315,7 @@ RUN --mount=type=cache,dst=/var/cache \
         stress-ng \
         snapper \
         btrfs-assistant \
+        podman-compose \
         edk2-ovmf \
         qemu \
         libvirt \

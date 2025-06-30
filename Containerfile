@@ -461,7 +461,6 @@ RUN --mount=type=cache,dst=/var/cache \
             plasma-welcome \
             plasma-welcome-fedora \
             plasma-discover-kns \
-            plasma-browser-integration \
             kcharselect \
             kde-partitionmanager && \
         sed -i '/<entry name="launchers" type="StringList">/,/<\/entry>/ s/<default>[^<]*<\/default>/<default>preferred:\/\/browser,applications:steam.desktop,applications:net.lutris.Lutris.desktop,applications:org.gnome.Ptyxis.desktop,applications:org.kde.discover.desktop,preferred:\/\/filemanager<\/default>/' /usr/share/plasma/plasmoids/org.kde.plasma.taskmanager/contents/config/main.xml && \
@@ -510,7 +509,6 @@ RUN --mount=type=cache,dst=/var/cache \
             gnome-extensions-app \
             gnome-system-monitor \
             gnome-initial-setup \
-            gnome-browser-connector \
             gnome-shell-extension-background-logo \
             gnome-shell-extension-apps-menu && \
         mkdir -p /tmp/tilingshell && \

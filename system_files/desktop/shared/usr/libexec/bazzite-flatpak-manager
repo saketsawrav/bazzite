@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 
 # SCRIPT VERSION
-VER=26
+VER=29
 VER_FILE="/etc/bazzite/flatpak_manager_version"
 VER_RAN=$(cat $VER_FILE)
 IMAGE_INFO="/usr/share/ublue-os/image-info.json"
@@ -25,6 +25,15 @@ fi
 # Ensure Flathub is enabled
 flatpak remote-add --if-not-exists --system flathub /etc/flatpak/remotes.d/flathub.flatpakrepo
 flatpak remote-modify --system --enable flathub
+
+# Disable fedora flatpak remote
+flatpak remote-modify --disable fedora || :
+flatpak remote-modify --disable fedora-testing || :
+
+# Filter out references from Flathub remote
+if [[ -f /usr/share/ublue-os/flatpak-blocklist ]]; then
+  flatpak remote-modify --system --filter=/usr/share/ublue-os/flatpak-blocklist flathub
+fi
 
 PROTONTRICKS_SETUP_FILE="/etc/bazzite/protontricks_installed"
 if [[ ! -f "$PROTONTRICKS_SETUP_FILE" ]]; then
@@ -108,9 +117,6 @@ fi
 mkdir -p /var/lib/flatpak/extension/org.mozilla.firefox.systemconfig/x86_64/stable/defaults/pref
 rm -f /var/lib/flatpak/extension/org.mozilla.firefox.systemconfig/x86_64/stable/defaults/pref/*bazzite*.js
 /usr/bin/cp -rf /usr/share/ublue-os/firefox-config/* /var/lib/flatpak/extension/org.mozilla.firefox.systemconfig/x86_64/stable/defaults/pref/
-
-# Update Flatpaks
-flatpak --system update -y
 
 mkdir -p /etc/bazzite
 echo $VER > $VER_FILE

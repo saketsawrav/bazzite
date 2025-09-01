@@ -114,7 +114,7 @@ Varian `bazzite-deck` ini didesain untuk digunakan sebagai alternatif untuk Stea
 - Pembaruan merusak sesuatu? tinggal rollback ke versi sebelumnya berkat fitur rollback `rpm-ostree`. Anda bisa memilih versi image sebelumnya di boot menu.
 - Pra-install Steam dan Lutris sebagai paket sistem.
 - Pra-install [Discover Overlay](https://github.com/trigg/Discover) untuk Discord dan otomatis diluncurkan di Gamemode,dan di desktop jika Discord terinstall, [Lihat dokumentasinya disini](https://trigg.github.io/Discover/bazzite).
-- Menggunakan ZRAM<sub><sup>(4GB)</sup></sub> dengan kompresi ZSTD secara bawaan dengan opsi untuk menggunakan 1GB swap file dan bisa diatur sesuai kebutuhan.
+- Menggunakan ZRAM<sub><sup>(4GB)</sup></sub> dengan kompresi LZ4 secara bawaan.
 - Penjadwal I/O untuk mencegah I/O starvation ketika memasang game atau ketika proses latar belakang `duperemove` dan `rmlint` bekerja.
 - Mengaplikasikan parameter kernel dari SteamOS.
 - Kalibrasi Warna Layar untuk layar matte dan reflektif Steam Deck.
@@ -252,7 +252,7 @@ sudo mokutil --import secure_boot.der
 ## Ucapan Terimakasih
 Bazzite merupakan upaya dari komunitas dan tidak akan pernah ada tanpa dukungan dari semua orang. berikut ini merupakan orang-orang yang telah membantu kami:
 
-- [rei.svg](https://github.com/reisvg) - Yang membuat logo dan branding.
+- [amelia.svg](https://bsky.app/profile/ameliasvg.bsky.social) - Yang membuat logo dan branding.
 - [evlaV](https://gitlab.com/evlaV) - Untuk membuat kode dari Valve tersedia dan menjadi [orang ini](https://xkcd.com/2347/).
 - [ChimeraOS](https://chimeraos.org/) - Untuk gamescope-sesion dan mendukung kami diperjalanan ini.
 - [Jovian-NixOS](https://github.com/Jovian-Experiments) - Untuk mendukung kami dengan menyelesaikan masalah teknis kami dan membuat project yang mirip. Serius bro coba cek proyek mereka. Mereka pakai Nix!.

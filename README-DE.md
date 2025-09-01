@@ -120,7 +120,7 @@ Diese Variante wurde für die Nutzung als Alternative zu SteamOS auf dem Steam D
 - Update hat etwas kaputt gemacht? Rolle dank der Rollback-Funktion von `rpm-ostree` einfach zur vorherigen Bazzite-Version zurück. Du kannst sogar frühere Images beim Booten auswählen.
 - Steam und Lutris sind als Layered Packages auf dem Image vorinstalliert.
 - [Discover Overlay](https://github.com/trigg/Discover) für Discord ist vorinstalliert und startet automatisch sowohl im Spielmodus als auch auf dem Desktop, wenn Discord installiert ist. [Die offizielle Dokumentation findest du hier](https://trigg.github.io/Discover/bazzite).
-- Verwendet standardmäßig ZRAM<sub><sup>(4GB)</sup></sub> mit dem ZSTD-Komprimierungsalgorithmus, mit der Option, zu einer 1GB Swap-Datei zurückzukehren und eine benutzerdefinierte Größe dafür festzulegen, falls gewünscht.
+- Verwendet standardmäßig ZRAM<sub><sup>(4GB)</sup></sub> mit dem LZ4-Komprimierungsalgorithmus.
 - [LAVD](https://crates.io/crates/scx_lavd) und [BORE](https://github.com/firelzrd/bore-scheduler) CPU-Scheduler für flüssiges und reaktionsschnelles Gameplay.
 - Kyber I/O-Scheduler, um I/O-Engpässe bei der Installation von Spielen oder während des `duperemove`-Hintergrundprozesses zu verhindern.
 - Wendest SteamOS' Kernel-Parameter an.
@@ -279,7 +279,7 @@ Falls nach einem Passwort gefragt wird, verwende `universalblue`.
 
 Bazzite ist eine Gemeinschaftsleistung und würde ohne die Unterstützung aller nicht existieren. Im Folgenden sind einige der Personen aufgeführt, die uns auf diesem Weg geholfen haben:
 
-- [rei.svg](https://github.com/reisvg) – Für die Erstellung unseres Logos und des gesamten Brandings.
+- [amelia.svg](https://bsky.app/profile/ameliasvg.bsky.social) – Für die Erstellung unseres Logos und des gesamten Brandings.
 - [SuperRiderTH](https://github.com/SuperRiderTH) – Für die Erstellung unseres Startvideos für den Steam Game Mode.
 - [evlaV](https://gitlab.com/evlaV) – Dafür, dass Valve's Code verfügbar gemacht wurde und dafür, dass er [diese Person](https://xkcd.com/2347/) ist.
 - [ChimeraOS](https://chimeraos.org/) – Für gamescope-session und für wertvolle Unterstützung auf unserem Weg.

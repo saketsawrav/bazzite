@@ -11,7 +11,7 @@ css: |
   }
   .bazzite-section banner-text {
      padding: 50px;
-     color: #ffffff
+     color: #ffffff;
   }
   .bazzite-section title {
      color: #ffffff;
@@ -57,14 +57,15 @@ sections:
       - io.github.Faugus.faugus-launcher
       - org.prismlauncher.PrismLauncher
       - io.mrarm.mcpelauncher
+      - at.vintagestory.VintageStory
       - org.vinegarhq.Sober
       - org.zdoom.GZDoom
+      - org.zdoom.Raze
       - org.openmw.OpenMW
       - dev.goats.xivlauncher
       - net.retrodeck.retrodeck
       - org.libretro.RetroArch
       - page.kramo.Cartridges
-      - org.pegasus_frontend.Pegasus
       - com.github._0negal.Viper
       - info.cemu.Cemu
       - org.DolphinEmu.dolphin-emu
@@ -81,18 +82,21 @@ sections:
       - io.github.stella_emu.Stella
       - org.scummvm.ScummVM
       - io.github.dosbox-staging
+      - rs.ruffle.Ruffle
       - com.supermodel3.Supermodel
+      - net.hhoney.rota
+      - io.github.doukutsu_rs.doukutsu-rs
       - com.github.k4zmu2a.spacecadetpinball
       - sh.ppy.osu
       - com.pokemmo.PokeMMO
-      - com.github.Alcaro.Flips
       - com.etlegacy.ETLegacy
       - com.realm667.Wolfenstein_Blade_of_Agony
+      - net.stabyourself.nottetris2
       - org.srb2.SRB2
       - org.srb2.SRB2Kart
+      - org.kartkrew.RingRacers
       - org.supertuxproject.SuperTux
       - net.supertuxkart.SuperTuxKart
-      - io.github.limo_app.limo
   - title: "Streaming & Chat"
     subtitle: "Sprunk'd it."
     rows: 3
@@ -109,6 +113,7 @@ sections:
       - com.feaneron.Boatswain
       - com.moonlight_stream.Moonlight
       - com.valvesoftware.SteamLink
+      - io.github.astralvixen.geforce-infinity
       - com.parsecgaming.parsec
       - com.discordapp.Discord
       - dev.vencord.Vesktop
@@ -139,6 +144,7 @@ sections:
       - com.github.iwalton3.jellyfin-media-player
       - tv.plex.PlexDesktop
       - com.plexamp.Plexamp
+      - rocks.shy.VacuumTube
       - org.strawberrymusicplayer.strawberry
       - camp.nook.nookdesktop
   - title: "Office & Productivity"
@@ -160,6 +166,7 @@ sections:
       - org.inkscape.Inkscape
       - org.blender.Blender
       - io.github.nokse22.Exhibit
+      - io.github.jliljebl.Flowblade
       - de.leopoldluley.Clapgrep
       - org.audacityteam.Audacity
       - org.ardour.Ardour
@@ -167,7 +174,6 @@ sections:
       - org.standardnotes.standardnotes
       - com.slack.Slack
       - com.github.IsmaelMartinez.teams_for_linux
-      - org.ardour.Ardour
   - title: "Utilities"
     subtitle: "Stuff you didn't need until now."
     rows: 2
@@ -180,6 +186,14 @@ sections:
       - bazzite-section
       - utilities-section
     appids:
+      - io.github.ilya_zlobintsev.LACT
+      - io.github.limo_app.limo
+      - io.github.radiolamp.mangojuice
+      - io.github.rfrench3.scopebuddy-gui
+      - io.github.trigg.discover_overlay
+      - com.github.wwmm.easyeffects
+      - me.timschneeberger.jdsp4linux
+      - com.github.Alcaro.Flips
       - io.github.thetumultuousunicornofdarkness.cpu-x
       - io.github.arunsivaramanneo.GPUViewer
       - dev.deedles.Trayscale
@@ -192,8 +206,6 @@ sections:
       - io.github.fastrizwaan.WineZGUI
       - io.github.berarma.Oversteer
       - io.github.lawstorant.boxflat
-      - io.github.radiolamp.mangojuice
-      - io.missioncenter.MissionCenter
       - org.keepassxc.KeePassXC
       - com.bitwarden.desktop
       - org.qbittorrent.qBittorrent

@@ -123,7 +123,7 @@ Varianten voor gebruik als alternatief voor SteamOS op de Steam Deck en voor con
 - Gaat een update fout? Ga gemakelijk terug naar een ouderen versie van Bazzite met `rpm-ostree`'s rollback functionaliteit. Je kan zelfs ouderen images selecteren tijdens het starten.
 - Steam en Lutris geïnstaleerd in de image.
 - [Discover Overlay](https://github.com/trigg/Discover) voor Discord geïntaleerd en start automatisch in Game mode en de Desktop als Discord beschikbaar is. [Zie de officiële documentatie hier](https://trigg.github.io/Discover/bazzite).
-- Gebruik van de <sub><sup>(4GB)</sup></sub> ZRAM met ZSTD compressie algoritme met de optie om terug te gaan naar een 1GB swap file en mogelijkheid om een eigen grooten te kiezen.
+- Gebruik van de <sub><sup>(4GB)</sup></sub> ZRAM met LZ4 compressie algoritme.
 - Kyber I/O scheduler om I/O starvation tegen te gaan tijdens het installeren van spellen of de achtergrond `duperemove` process.
 - Gebruikt SteamOS's kernel parameters.
 - Kleur gecalibreerde display profielen voor matte and reflectieven Steam Deck schermen.
@@ -289,7 +289,7 @@ Als er voor een wachtwoord gevraagd wordt, gebruik `universalblue`.
 
 Bazzite is een gemeenschapsinspanning en bestaat niet zonder hen. Zie hieronder mensen die ons hulp hebben verleend since het begin:
 
-- [rei.svg](https://github.com/reisvg) - Voor het creëren van ons logo en branding.
+- [amelia.svg](https://bsky.app/profile/ameliasvg.bsky.social) - Voor het creëren van ons logo en branding.
 - [SuperRiderTH](https://github.com/SuperRiderTH) - Voor het creëren van de Steam Game Mode start video.
 - [evlaV](https://gitlab.com/evlaV) - Om Valve's code beschikbaar te maken en om [dit persoon](https://xkcd.com/2347/) te zijn.
 - [ChimeraOS](https://chimeraos.org/) - Voor gamescope-sessies en voor belangrijk hulp.

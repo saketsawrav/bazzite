@@ -122,7 +122,7 @@ rpm-ostree rebase ostree-unverified-registry:ghcr.io/ublue-os/bazzite-nvidia:sta
 - 更新破坏了一些东西？借助于`rpm-ostree`的回滚功能，你可以轻松回滚到先前版本的Bazzite。你甚至可以在启动时选定先前版本的镜像。
 - Steam and Lutris作为分层包预装在镜像上。
 - 为Discord预装了[Discover Overlay](https://github.com/trigg/Discover)，如果Discord已经安装，则会在游戏模式和桌面模式自动启动。[在此查看官方文档](https://trigg.github.io/Discover/bazzite)。
-- 默认情况下将使用ZRAM<sub><sup>(4GB)</sup></sub> 及ZSTD压缩算法。可以选择切换回1GB交换文件，然后根据需要自定义其大小。
+- 默认情况下将使用ZRAM<sub><sup>(4GB)</sup></sub> 及LZ4压缩算法。
 - Kyber I/O 调度程序用来防止安装游戏或后台运行`duperemove`进程时出现I/O starvation。
 - 应用SteamOS的内核参数。
 - 包括用于磨砂和镜面Steam Deck屏幕的颜色校准显示配置文件。
@@ -288,7 +288,7 @@ sudo mokutil --import secure_boot.der
 
 Bazzite是社区努力的结果，离不开每个人的支持。以下是那些一路帮助过我们的人：
 
-- [rei.svg](https://github.com/reisvg) - 创作了我们的徽标和整体品牌。
+- [amelia.svg](https://bsky.app/profile/ameliasvg.bsky.social) - 创作了我们的徽标和整体品牌。
 - [SuperRiderTH](https://github.com/SuperRiderTH) - 创作了我们Steam游戏模式的启动视频。
 - [evlaV](https://gitlab.com/evlaV) - 使Valve的代码可用并成为[this person](https://xkcd.com/2347/).
 - [ChimeraOS](https://chimeraos.org/) - For gamescope-session and for valuable support along the way.

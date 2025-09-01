@@ -1,3 +1,4 @@
+io.github.kolunmi.Bazaar
 com.valvesoftware.Steam
 net.lutris.Lutris
 org.openrgb.OpenRGB
@@ -15,8 +16,8 @@ com.jetbrains.RubyMine
 com.jetbrains.RustRover
 io.neovim.nvim
 org.vim.Vim
-dev.neovide.neovide
 io.github.zyedidia.micro
 com.helix_editor.Helix
-org.gnu.emacs
 app.devsuite.Ptyxis
+dev.lizardbyte.app.Sunshine
+org.kde.dolphin

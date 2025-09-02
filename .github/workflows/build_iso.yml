@@ -22,7 +22,8 @@ jobs:
       fail-fast: false
       matrix:
         image_name:
-          - bazzite-asus-nvidia-open
+          - bazzite-asus-dx-nvidia-open
+          - bazzite-asus-dx
         major_version: [42]
     steps:
 

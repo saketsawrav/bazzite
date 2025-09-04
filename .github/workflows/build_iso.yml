@@ -13,17 +13,11 @@ concurrency:
 
 jobs:
   build-iso:
-    # Use your self-hosted runner with labels
     runs-on: [self-hosted, linux, x64]
 
-    # Run the job in an isolated container on that runner
-    # (Use an actual Docker image name, not "ubuntu-latest")
     container:
       image: ubuntu:24.04
-      # If your ISO build needs loop devices, fuse, nested containers, etc.,
-      # privileged helps. Remove if not needed.
       options: --privileged
-      # Optional: mount /dev so loop devices are visible; tweak to your needs.
       volumes:
         - /dev:/dev
 
@@ -46,33 +40,32 @@ jobs:
 
     steps:
       - name: Prepare tooling inside job container
-        shell: bash
         run: |
+          set -euo pipefail
           apt-get update
-          # Add whatever your ISO build requires. Keep minimal & cache via your image later.
           apt-get install -y --no-install-recommends \
             ca-certificates curl git jq xorriso squashfs-tools \
-            make sudo gzip tar coreutils
+            make sudo gzip tar coreutils \
+            podman uidmap fuse-overlayfs  # <-- add these
 
-      - name: Free Disk Space (Ubuntu)
-        uses: jlumbroso/free-disk-space@54081f138730dfa15788a46383842cd2f914a1be # v1.3.1
+      # OPTIONAL: comment out on self-hosted to avoid no-op warnings
+      # - name: Free Disk Space (Ubuntu)
+      #   uses: jlumbroso/free-disk-space@54081f138730dfa15788a46383842cd2f914a1be
 
       - name: Checkout Repo
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
 
       - name: Set Image Tag
         id: generate-tag
-        shell: bash
         run: |
           TAG="stable"
           if [[ "${{ github.ref_name }}" == "testing" ]]; then
-              TAG="testing"
+            TAG="testing"
           fi
           echo "tag=${TAG}" >> $GITHUB_OUTPUT
 
       - name: Set Flatpaks Directory Shortname
         id: generate-flatpak-dir-shortname
-        shell: bash
         run: |
           FLATPAK_DIR_SHORTNAME="installer/kde_flatpaks"
           if [[ "${{ matrix.image_name }}" =~ "gnome" ]]; then
@@ -107,13 +100,12 @@ jobs:
 
       - name: Move ISOs to Upload Directory
         id: upload-directory
-        shell: bash
         run: |
           ISO_UPLOAD_DIR=${{ github.workspace }}/upload
           DEST=${ISO_UPLOAD_DIR}/$(basename ${{ steps.build.outputs.iso-dest }})
-          mkdir -p ${ISO_UPLOAD_DIR}
-          mv ${{ steps.build.outputs.iso-dest }} ${DEST}
-          sha256sum ${DEST} > ${DEST}-CHECKSUM
+          mkdir -p "${ISO_UPLOAD_DIR}"
+          mv "${{ steps.build.outputs.iso-dest }}" "${DEST}"
+          sha256sum "${DEST}" > "${DEST}-CHECKSUM"
           echo "iso-upload-dir=${ISO_UPLOAD_DIR}" >> $GITHUB_OUTPUT
 
       - name: Upload ISOs and Checksum to Job Artifacts

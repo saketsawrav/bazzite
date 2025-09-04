@@ -14,17 +14,18 @@ concurrency:
 
 jobs:
   build-iso:
-    # Route to your self-hosted runner by labels (add a custom label like iso-builder)
+    # Route to your self-hosted runner by labels
     runs-on: [self-hosted, linux, x64]
 
     # Run the entire job inside a container for isolation
     container:
       image: ubuntu:24.04
-      # If your ISO build needs loop devices/mounts, keep privileged; otherwise remove.
+      # Keep privileged for loop devices/mounts used by ISO builders
       options: --privileged
       volumes:
         - /dev:/dev
 
+    # Force bash for all run steps (container jobs default to `sh`)
     defaults:
       run:
         shell: bash
@@ -42,15 +43,17 @@ jobs:
           - bazzite-asus-dx
 
     steps:
-      - name: Prepare tooling inside job container
-        shell: bash
+      - name: Prepare tooling inside job container (sudo, podman, tools)
         run: |
           apt-get update
-          apt-get install -y --no-install-recommends \
+          DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
             ca-certificates curl git jq xorriso squashfs-tools \
-            sudo make gzip tar coreutils
+            sudo make gzip tar coreutils \
+            podman fuse-overlayfs uidmap
 
+      # Optional: this mainly helps GitHub-hosted runners; keep or disable as you prefer
       - name: Free Disk Space (Ubuntu)
+        if: ${{ false }}
         uses: jlumbroso/free-disk-space@54081f138730dfa15788a46383842cd2f914a1be # v1.3.1
 
       - name: Checkout Repo
@@ -58,7 +61,6 @@ jobs:
 
       - name: Set Image Tag
         id: generate-tag
-        shell: bash
         run: |
           TAG="stable"
           if [[ "${{ github.ref_name }}" == "testing" ]]; then
@@ -68,7 +70,6 @@ jobs:
 
       - name: Set Flatpaks Directory Shortname
         id: generate-flatpak-dir-shortname
-        shell: bash
         run: |
           FLATPAK_DIR_SHORTNAME="installer/kde_flatpaks"
           if [[ "${{ matrix.image_name }}" =~ "gnome" ]]; then
@@ -83,7 +84,7 @@ jobs:
         with:
           string: ${{ env.IMAGE_REGISTRY }}
 
-      # We need this as we use the desktop image as the runtime for the livecds.
+      # Use the desktop image as the runtime for the livecds.
       - name: Obtain non-deck image ref
         id: get-nondeck-ref
         run: |
@@ -105,7 +106,6 @@ jobs:
 
       - name: Move ISOs to Upload Directory
         id: upload-directory
-        shell: bash
         run: |
           ISO_UPLOAD_DIR=${{ github.workspace }}/upload
           DEST=${ISO_UPLOAD_DIR}/$(basename ${{ steps.build.outputs.iso-dest }})

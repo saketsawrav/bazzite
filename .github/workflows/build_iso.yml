@@ -13,11 +13,25 @@ concurrency:
 
 jobs:
   build-iso:
-    runs-on: ubuntu-latest
+    # Use your self-hosted runner with labels
+    runs-on: [self-hosted, linux, x64]
+
+    # Run the job in an isolated container on that runner
+    # (Use an actual Docker image name, not "ubuntu-latest")
+    container:
+      image: ubuntu:24.04
+      # If your ISO build needs loop devices, fuse, nested containers, etc.,
+      # privileged helps. Remove if not needed.
+      options: --privileged
+      # Optional: mount /dev so loop devices are visible; tweak to your needs.
+      volumes:
+        - /dev:/dev
+
     permissions:
       contents: read
       packages: write
       id-token: write
+
     strategy:
       fail-fast: false
       matrix:
@@ -25,7 +39,16 @@ jobs:
           - bazzite-asus-dx-nvidia-open
           - bazzite-asus-dx
         major_version: [42]
+
     steps:
+      - name: Prepare tooling inside job container
+        shell: bash
+        run: |
+          apt-get update
+          # Add whatever your ISO build requires. Keep minimal & cache via your image later.
+          apt-get install -y --no-install-recommends \
+            ca-certificates curl git jq xorriso squashfs-tools \
+            make sudo gzip tar coreutils
 
       - name: Free Disk Space (Ubuntu)
         uses: jlumbroso/free-disk-space@54081f138730dfa15788a46383842cd2f914a1be # v1.3.1
@@ -38,16 +61,9 @@ jobs:
         shell: bash
         run: |
           TAG="stable"
-
           if [[ "${{ github.ref_name }}" == "testing" ]]; then
               TAG="testing"
           fi
-
-          # Would like to implement in the future. This will allow us to support image tags from a PR.
-          #if [[ github.event.number ]]; then
-          #  TAG="pr-${{ github.event.number }}-${{ matrix.major_version }}"
-          #fi
-
           echo "tag=${TAG}" >> $GITHUB_OUTPUT
 
       - name: Set Flatpaks Directory Shortname
@@ -55,22 +71,17 @@ jobs:
         shell: bash
         run: |
           FLATPAK_DIR_SHORTNAME="installer/kde_flatpaks"
-
           if [[ "${{ matrix.image_name }}" =~ "gnome" ]]; then
             FLATPAK_DIR_SHORTNAME="installer/gnome_flatpaks"
           fi
-
           echo "flatpak-dir-shortname=$(realpath ${FLATPAK_DIR_SHORTNAME})" >> $GITHUB_OUTPUT
 
-      # Docker requires lowercase registry references
       - name: Lowercase Registry
         id: registry_case
         uses: ASzc/change-string-case-action@d0603cd0a7dd490be678164909f65c7737470a7f # v6
         with:
           string: ${{ env.IMAGE_REGISTRY }}
 
-      # We need this as we use the desktop image as the runtime for
-      # the livecds.
       - name: Obtain non-deck image ref
         id: get-nondeck-ref
         run: |
@@ -96,7 +107,6 @@ jobs:
         run: |
           ISO_UPLOAD_DIR=${{ github.workspace }}/upload
           DEST=${ISO_UPLOAD_DIR}/$(basename ${{ steps.build.outputs.iso-dest }})
-
           mkdir -p ${ISO_UPLOAD_DIR}
           mv ${{ steps.build.outputs.iso-dest }} ${DEST}
           sha256sum ${DEST} > ${DEST}-CHECKSUM

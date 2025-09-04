@@ -14,18 +14,38 @@ concurrency:
 
 jobs:
   build-iso:
-    runs-on: ubuntu-latest
+    # Route to your self-hosted runner by labels (add a custom label like iso-builder)
+    runs-on: [self-hosted, linux, x64]
+
+    # Run the entire job inside a container for isolation
+    container:
+      image: ubuntu:24.04
+      # If your ISO build needs loop devices/mounts, keep privileged; otherwise remove.
+      options: --privileged
+      volumes:
+        - /dev:/dev
+
     permissions:
       contents: read
       packages: write
       id-token: write
+
     strategy:
       fail-fast: false
       matrix:
         image_name:
           - bazzite-asus-dx-nvidia-open
           - bazzite-asus-dx
+
     steps:
+      - name: Prepare tooling inside job container
+        shell: bash
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends \
+            ca-certificates curl git jq xorriso squashfs-tools \
+            make gzip tar coreutils
+
       - name: Free Disk Space (Ubuntu)
         uses: jlumbroso/free-disk-space@54081f138730dfa15788a46383842cd2f914a1be # v1.3.1
 
@@ -37,11 +57,9 @@ jobs:
         shell: bash
         run: |
           TAG="stable"
-
           if [[ "${{ github.ref_name }}" == "testing" ]]; then
-              TAG="testing"
+            TAG="testing"
           fi
-
           echo "tag=${TAG}" >> $GITHUB_OUTPUT
 
       - name: Set Flatpaks Directory Shortname
@@ -49,11 +67,9 @@ jobs:
         shell: bash
         run: |
           FLATPAK_DIR_SHORTNAME="installer/kde_flatpaks"
-
           if [[ "${{ matrix.image_name }}" =~ "gnome" ]]; then
             FLATPAK_DIR_SHORTNAME="installer/gnome_flatpaks"
           fi
-
           echo "flatpak-dir-shortname=$(realpath ${FLATPAK_DIR_SHORTNAME})" >> $GITHUB_OUTPUT
 
       # Docker requires lowercase registry references
@@ -63,14 +79,7 @@ jobs:
         with:
           string: ${{ env.IMAGE_REGISTRY }}
 
-      # - name: Setup Bazzite Repo
-      #   id: setup-bazzite-repo
-      #   shell: bash
-      #   run: |
-      #     curl -Lo ${{ github.workspace }}/bazzite.repo https://copr.fedorainfracloud.org/coprs/bazzite-org/bazzite/repo/fedora-${{ matrix.major_version }}/bazzite-org-bazzite-fedora-${{ matrix.major_version }}.repo
-
-      # We need this as we use the desktop image as the runtime for
-      # the livecds.
+      # We need this as we use the desktop image as the runtime for the livecds.
       - name: Obtain non-deck image ref
         id: get-nondeck-ref
         run: |
@@ -96,7 +105,6 @@ jobs:
         run: |
           ISO_UPLOAD_DIR=${{ github.workspace }}/upload
           DEST=${ISO_UPLOAD_DIR}/$(basename ${{ steps.build.outputs.iso-dest }})
-
           mkdir -p ${ISO_UPLOAD_DIR}
           mv ${{ steps.build.outputs.iso-dest }} ${DEST}
           sha256sum ${DEST} > ${DEST}-CHECKSUM
@@ -106,25 +114,9 @@ jobs:
         if: github.ref_name == 'testing'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: ${{ matrix.image_name }}-${{ steps.generate-tag.outputs.tag }}-${{ matrix.major_version}}
+          name: ${{ matrix.image_name }}-${{ steps.generate-tag.outputs.tag }}
           path: ${{ steps.upload-directory.outputs.iso-upload-dir }}
           if-no-files-found: error
           retention-days: 0
           compression-level: 0
           overwrite: true
-
-      - name: Upload ISOs and Checksum to R2
-        if: github.event_name == 'workflow_dispatch' && github.ref_name == 'main'
-        shell: bash
-        env:
-          RCLONE_CONFIG_R2_TYPE: s3
-          RCLONE_CONFIG_R2_PROVIDER: Cloudflare
-          RCLONE_CONFIG_R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
-          RCLONE_CONFIG_R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-          RCLONE_CONFIG_R2_REGION: auto
-          RCLONE_CONFIG_R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
-          SOURCE_DIR: ${{ steps.upload-directory.outputs.iso-upload-dir }}
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y rclone
-          rclone copy $SOURCE_DIR R2:bazzite

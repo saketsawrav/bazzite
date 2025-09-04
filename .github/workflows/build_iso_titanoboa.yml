@@ -21,7 +21,10 @@ jobs:
     container:
       image: ubuntu:24.04
       # Keep privileged for loop devices/mounts used by ISO builders
-      options: --privileged
+      options: >-
+        --privileged
+        --cgroupns=host
+        -v /sys/fs/cgroup:/sys/fs/cgroup:rw
       volumes:
         - /dev:/dev
 

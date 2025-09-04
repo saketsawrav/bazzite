@@ -25,6 +25,10 @@ jobs:
       volumes:
         - /dev:/dev
 
+    defaults:
+      run:
+        shell: bash
+
     permissions:
       contents: read
       packages: write

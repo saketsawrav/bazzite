@@ -48,7 +48,7 @@ jobs:
           apt-get update
           apt-get install -y --no-install-recommends \
             ca-certificates curl git jq xorriso squashfs-tools \
-            make gzip tar coreutils
+            sudo make gzip tar coreutils
 
       - name: Free Disk Space (Ubuntu)
         uses: jlumbroso/free-disk-space@54081f138730dfa15788a46383842cd2f914a1be # v1.3.1

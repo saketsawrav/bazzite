@@ -33,11 +33,11 @@ ARG IMAGE_FLAVOR="${IMAGE_FLAVOR:-main}"
 ARG NVIDIA_FLAVOR="${NVIDIA_FLAVOR:-nvidia}"
 ARG NVIDIA_BASE="${NVIDIA_BASE:-bazzite}"
 ARG KERNEL_FLAVOR="${KERNEL_FLAVOR:-bazzite}"
-ARG KERNEL_VERSION="${KERNEL_VERSION:-6.14.8-300.bazzite.fc42.x86_64}"
+ARG KERNEL_VERSION="${KERNEL_VERSION:-6.16.4-102.bazzite.fc42.x86_64}"
 ARG IMAGE_BRANCH="${IMAGE_BRANCH:-main}"
 ARG SOURCE_IMAGE="${SOURCE_IMAGE:-$BASE_IMAGE_NAME-$BASE_IMAGE_FLAVOR}"
 ARG BASE_IMAGE="ghcr.io/ublue-os/${SOURCE_IMAGE}"
-ARG FEDORA_VERSION="${FEDORA_VERSION:-41}"
+ARG FEDORA_VERSION="${FEDORA_VERSION:-42}"
 ARG JUPITER_FIRMWARE_VERSION="${JUPITER_FIRMWARE_VERSION:-jupiter-20241205.1}"
 ARG SHA_HEAD_SHORT="${SHA_HEAD_SHORT}"
 ARG VERSION_TAG="${VERSION_TAG}"
@@ -61,10 +61,10 @@ ARG IMAGE_FLAVOR="${IMAGE_FLAVOR:-main}"
 ARG NVIDIA_FLAVOR="${NVIDIA_FLAVOR:-nvidia}"
 ARG NVIDIA_BASE="${NVIDIA_BASE:-bazzite}"
 ARG KERNEL_FLAVOR="${KERNEL_FLAVOR:-bazzite}"
-ARG KERNEL_VERSION="${KERNEL_VERSION:-6.14.8-300.bazzite.fc42.x86_64}"
+ARG KERNEL_VERSION="${KERNEL_VERSION:-6.16.4-102.bazzite.fc42.x86_64}"
 ARG IMAGE_BRANCH="${IMAGE_BRANCH:-main}"
 ARG BASE_IMAGE_NAME="${BASE_IMAGE_NAME:-kinoite}"
-ARG FEDORA_VERSION="${FEDORA_VERSION:-41}"
+ARG FEDORA_VERSION="${FEDORA_VERSION:-42}"
 ARG JUPITER_FIRMWARE_VERSION="${JUPITER_FIRMWARE_VERSION:-jupiter-20241205.1}"
 ARG SHA_HEAD_SHORT="${SHA_HEAD_SHORT}"
 ARG VERSION_TAG="${VERSION_TAG}"
@@ -765,9 +765,10 @@ RUN --mount=type=cache,dst=/var/cache \
     eval "$(/ctx/dnf5-setopt setopt '*negativo17*' enabled=0)" && \
     sed -i 's#/var/lib/selinux#/etc/selinux#g' /usr/lib/python3.*/site-packages/setroubleshoot/util.py && \
     sed -i 's|^ExecStart=.*|ExecStart=/usr/libexec/rtkit-daemon --no-canary|' /usr/lib/systemd/system/rtkit-daemon.service && \
+    sed -i 's/power-saver=powersave$/power-saver=powersave-bazzite/' /etc/tuned/ppd.conf && \
     sed -i 's/balanced=balanced$/balanced=balanced-bazzite/' /etc/tuned/ppd.conf && \
     sed -i 's/performance=throughput-performance$/performance=throughput-performance-bazzite/' /etc/tuned/ppd.conf && \
-    sed -i 's/balanced=balanced-battery$/balanced=balanced-battery-bazzite/' /etc/tuned/ppd.conf && \
+    sed -i 's/balanced=balanced-battery$/balanced=balanced-battery-bazzite\npower-saver=powersave-battery-bazzite/' /etc/tuned/ppd.conf && \
     ln -s /usr/bin/true /usr/bin/pulseaudio && \
     mkdir -p /etc/flatpak/remotes.d && \
     curl --retry 3 -Lo /etc/flatpak/remotes.d/flathub.flatpakrepo https://dl.flathub.org/repo/flathub.flatpakrepo && \
@@ -816,10 +817,10 @@ ARG IMAGE_FLAVOR="${IMAGE_FLAVOR:-main}"
 ARG NVIDIA_FLAVOR="${NVIDIA_FLAVOR:-nvidia}"
 ARG NVIDIA_BASE="${NVIDIA_BASE:-bazzite}"
 ARG KERNEL_FLAVOR="${KERNEL_FLAVOR:-bazzite}"
-ARG KERNEL_VERSION="${KERNEL_VERSION:-6.14.8-300.bazzite.fc42.x86_64}"
+ARG KERNEL_VERSION="${KERNEL_VERSION:-6.16.4-102.bazzite.fc42.x86_64}"
 ARG IMAGE_BRANCH="${IMAGE_BRANCH:-main}"
 ARG BASE_IMAGE_NAME="${BASE_IMAGE_NAME:-kinoite}"
-ARG FEDORA_VERSION="${FEDORA_VERSION:-41}"
+ARG FEDORA_VERSION="${FEDORA_VERSION:-42}"
 ARG VERSION_TAG="${VERSION_TAG}"
 ARG VERSION_PRETTY="${VERSION_PRETTY}"
 
@@ -966,15 +967,8 @@ RUN --mount=type=cache,dst=/var/cache \
     if grep -q "silverblue" <<< "${BASE_IMAGE_NAME}"; then \
         systemctl disable gdm.service && \
         systemctl enable sddm.service \
-    ; fi && \
-    if grep -q "silverblue" <<< "${BASE_IMAGE_NAME}"; then \
-      mkdir -p "/usr/share/ublue-os/dconfs/deck-silverblue/" && \
-      cp "/usr/share/glib-2.0/schemas/zz0-"*"-bazzite-deck-silverblue-"*".gschema.override" "/usr/share/ublue-os/dconfs/deck-silverblue/" && \
-      find "/etc/dconf/db/distro.d/" -maxdepth 1 -type f -exec cp {} "/usr/share/ublue-os/dconfs/deck-silverblue/" \; && \
-      dconf-override-converter to-dconf "/usr/share/ublue-os/dconfs/deck-silverblue/zz0-"*"-bazzite-deck-silverblue-"*".gschema.override" && \
-      rm "/usr/share/ublue-os/dconfs/deck-silverblue/zz0-"*"-bazzite-deck-silverblue-"*".gschema.override" \
     ; else \
-      systemctl disable usr-share-sddm-themes.mount \
+        systemctl disable usr-share-sddm-themes.mount \
     ; fi && \
     mkdir -p /tmp/bazzite-schema-test && \
     find "/usr/share/glib-2.0/schemas/" -type f ! -name "*.gschema.override" -exec cp {} "/tmp/bazzite-schema-test/" \; && \
@@ -1025,10 +1019,10 @@ ARG IMAGE_FLAVOR="${IMAGE_FLAVOR:-nvidia}"
 ARG NVIDIA_FLAVOR="${NVIDIA_FLAVOR:-nvidia}"
 ARG NVIDIA_BASE="${NVIDIA_BASE:-bazzite}"
 ARG KERNEL_FLAVOR="${KERNEL_FLAVOR:-bazzite}"
-ARG KERNEL_VERSION="${KERNEL_VERSION:-6.14.8-300.bazzite.fc42.x86_64}"
+ARG KERNEL_VERSION="${KERNEL_VERSION:-6.16.4-102.bazzite.fc42.x86_64}"
 ARG IMAGE_BRANCH="${IMAGE_BRANCH:-main}"
 ARG BASE_IMAGE_NAME="${BASE_IMAGE_NAME:-kinoite}"
-ARG FEDORA_VERSION="${FEDORA_VERSION:-41}"
+ARG FEDORA_VERSION="${FEDORA_VERSION:-42}"
 ARG VERSION_TAG="${VERSION_TAG}"
 ARG VERSION_PRETTY="${VERSION_PRETTY}"
 
@@ -1042,6 +1036,7 @@ RUN --mount=type=cache,dst=/var/cache \
     --mount=type=tmpfs,dst=/tmp \
     dnf5 config-manager unsetopt skip_if_unavailable && \
     dnf5 -y remove \
+        nvidia-gpu-firmware \
         rocm-hip \
         rocm-opencl \
         rocm-clinfo \
@@ -1061,16 +1056,14 @@ RUN --mount=type=cache,dst=/var/cache \
         mesa-vdpau-drivers.x86_64 \
         mesa-vdpau-drivers.i686 && \
     dnf5 -y install \
+        egl-wayland.x86_64 \
+        egl-wayland.i686 \
         egl-wayland2.x86_64 \
         egl-wayland2.i686 && \
     /ctx/ghcurl "https://raw.githubusercontent.com/ublue-os/main/refs/heads/main/build_files/nvidia-install.sh" --retry 3 -Lo /tmp/nvidia-install.sh && \
     chmod +x /tmp/nvidia-install.sh && \
     IMAGE_NAME="${BASE_IMAGE_NAME}" /tmp/nvidia-install.sh && \
     rm -f /usr/share/vulkan/icd.d/nouveau_icd.*.json && \
-    : "DELETEME: Quick workaround for typo in /usr/share/vulkan/icd.d/nvidia_icd.*.json" && \
-    : "          See: https://forums.developer.nvidia.com/t/580-release-feedback-discussion/341205/174" && \
-    sed -i 's/1.4.312/1.4.321/' /usr/share/vulkan/icd.d/nvidia_icd.i686.json /usr/share/vulkan/icd.d/nvidia_icd.x86_64.json && \
-    : && \
     ln -s libnvidia-ml.so.1 /usr/lib64/libnvidia-ml.so && \
     dnf5 config-manager setopt "terra-mesa".enabled=0 && \
     dnf5 -y copr disable ublue-os/staging && \
